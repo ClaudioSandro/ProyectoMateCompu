@@ -1,6 +1,6 @@
 #pragma once
 #include "FordFulkerson.h"
-
+#include <ctime>
 
 namespace ProyectoMateCompu {
 
@@ -17,8 +17,7 @@ namespace ProyectoMateCompu {
 	public ref class ProyectoMateCompu : public System::Windows::Forms::Form
 	{
 	private:
-		FordFulkerson* fordFulkerson;
-
+		
 
 
 	public:
@@ -27,7 +26,7 @@ namespace ProyectoMateCompu {
 			InitializeComponent();
 
 
-			fordFulkerson = new FordFulkerson(5);
+		
 		}
 
 
@@ -43,7 +42,7 @@ namespace ProyectoMateCompu {
 			}
 
 			// Libera la memoria de FordFulkerson
-			delete fordFulkerson;
+			
 		}
 
 	private: System::Windows::Forms::Label^ texto_ingresar_tamanio;
@@ -110,6 +109,7 @@ namespace ProyectoMateCompu {
 			this->label_mostrar_matrix->Size = System::Drawing::Size(134, 16);
 			this->label_mostrar_matrix->TabIndex = 2;
 			this->label_mostrar_matrix->Text = L"tu matrix cargara aqui";
+			this->label_mostrar_matrix->Click += gcnew System::EventHandler(this, &ProyectoMateCompu::label_mostrar_matrix_Click);
 			// 
 			// texto_mostrar_flujo
 			// 
@@ -151,6 +151,7 @@ namespace ProyectoMateCompu {
 			this->button1->TabIndex = 7;
 			this->button1->Text = L"calcular";
 			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &ProyectoMateCompu::button1_Click);
 			// 
 			// ProyectoMateCompu
 			// 
@@ -172,5 +173,86 @@ namespace ProyectoMateCompu {
 
 		}
 #pragma endregion
-	};
+	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
+		// Obtener el tamaño de la matriz ingresado por el usuario
+		int matrixSize = System::Convert::ToInt32(textBox1->Text);
+
+
+		if (matrixSize < 5 || matrixSize > 15) {
+			// Mostrar un mensaje de error si está fuera del rango
+			MessageBox::Show("El tamaño de la matriz debe estar entre 5 y 15.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			return; // Salir de la función sin hacer más nada
+		}
+
+		// Crear una matriz en C++ para representar el gráfico
+		int** graph = new int* [matrixSize];
+		for (int i = 0; i < matrixSize; i++) {
+			graph[i] = new int[matrixSize];
+		}
+
+		// Llenar la matriz con valores aleatorios o ingresados por el usuario
+		if (System::Convert::ToInt32(textBox2->Text) == 0) {
+			// Llenar la matriz aleatoriamente
+			srand(time(nullptr));
+			for (int i = 0; i < matrixSize; i++) {
+				for (int j = 0; j < matrixSize; j++) {
+					graph[i][j] = rand() % 10;  // Valores aleatorios entre 0 y 9
+				}
+			}
+		}
+		else {
+			// Pedir al usuario que ingrese los valores de la matriz
+			// Debes implementar la lógica para obtener estos valores del usuario.
+			// Puedes usar cuadros de diálogo o controles de entrada de datos.
+		}
+
+		// Calcular el flujo máximo utilizando el algoritmo de Ford-Fulkerson
+		FordFulkerson fordFulkerson(matrixSize);
+		int source = 0;  // Definir el nodo fuente (puedes cambiarlo según tus necesidades)
+		int sink = matrixSize - 1;  // Definir el nodo sumidero (puedes cambiarlo según tus necesidades)
+		int maxFlow = fordFulkerson.findMaxFlow(graph, source, sink);
+
+		// Mostrar el resultado en la etiqueta de texto
+		text_resultado->Text = " "+ maxFlow;
+
+		// Liberar la memoria de la matriz
+		for (int i = 0; i < matrixSize; i++) {
+			delete[] graph[i];
+		}
+		delete[] graph;
+	}
+
+private: System::Void label_mostrar_matrix_Click(System::Object^ sender, System::EventArgs^ e) {
+	String^ matrixText = "";
+
+	// Obtener el tamaño de la matriz ingresado por el usuario
+	int matrixSize = System::Convert::ToInt32(textBox1->Text);
+
+	// Crear y llenar la matriz (similar a lo que hiciste en el botón calcular)
+	int** graph = new int* [matrixSize];
+	for (int i = 0; i < matrixSize; i++) {
+		graph[i] = new int[matrixSize];
+		for (int j = 0; j < matrixSize; j++) {
+			graph[i][j] = rand() % 10;  // Valores aleatorios entre 0 y 9
+		}
+	}
+
+	// Generar una representación de la matriz como una cadena
+	for (int i = 0; i < matrixSize; i++) {
+		for (int j = 0; j < matrixSize; j++) {
+			matrixText += graph[i][j].ToString() + "\t"; // Agregar un tabulador entre los elementos
+		}
+		matrixText += "\n"; // Agregar una nueva línea para la siguiente fila
+	}
+
+	// Mostrar la matriz en un MessageBox
+	MessageBox::Show(matrixText, "Matriz Generada", MessageBoxButtons::OK, MessageBoxIcon::Information);
+
+	// Liberar la memoria de la matriz
+	for (int i = 0; i < matrixSize; i++) {
+		delete[] graph[i];
+	}
+	delete[] graph;
+}
+};
 }
