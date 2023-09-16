@@ -121,16 +121,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Organizador.cpp" />
     <ClCompile Include="ProyectoMateCompu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Controladora.h" />
-    <ClInclude Include="FlujoMaximo.h" />
+    <ClInclude Include="FordFulkerson.h" />
     <ClInclude Include="ProyectoMateCompu.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="Recursos.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ProyectoMateCompu.resx">
+      <DependentUpon>ProyectoMateCompu.h</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
